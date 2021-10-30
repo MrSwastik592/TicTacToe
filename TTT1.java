@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+
 import java.util.Random;
 
 import javax.swing.*;
@@ -11,7 +12,7 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
   int a1[][] = { { 10, 1, 2, 3, 11 }, { 10, 1, 4, 7, 11 }, { 10, 1, 5, 9, 11 }, { 10, 2, 5, 8, 11 },
       { 10, 3, 5, 7, 11 }, { 10, 3, 6, 9, 11 }, { 10, 4, 5, 6, 11 }, { 10, 7, 8, 9, 11 } };
 
-  boolean state, type, set;
+  boolean state, type, set,over=false;
 
   Icon ic1, ic2, icon, ic11, ic22;
   Checkbox c1, c2;
@@ -56,7 +57,7 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
 
   /*********************************************************/
 
-  public void complogic(int num) {
+  public int complogic(int num) {
 
     for (i = 0; i <= 7; i++) {
       for (j = 1; j <= 3; j++) {
@@ -81,7 +82,7 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
           b[yesnull - 1].setIcon(ic2);
           this.check(yesnull);
           set = false;
-          break;
+          return yesnull-1;
         }
       } else if (a[i][0] == 10) {
         for (j = 1; j <= 3; j++) {
@@ -89,7 +90,7 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
             b[(a[i][j] - 1)].setIcon(ic2);
             this.check(a[i][j]);
             set = false;
-            break;
+            return (a[i][j]-1);
           }
         }
         if (set == false)
@@ -99,6 +100,7 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
       if (set == false)
         break;
     }
+    return -1;
 
   }
 
@@ -149,7 +151,7 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
   }
 
   public void actionPerformed(ActionEvent e) {
-
+    int won_int_random=0;
     if (type == true) {
       if (e.getSource() == reset) {
         for (i = 0; i <= 8; i++) {
@@ -158,7 +160,6 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
       } else {
         for (i = 0; i <= 8; i++) {
           if (e.getSource() == b[i]) {
-
             if (b[i].getIcon() == null) {
               if (state == true) {
                 icon = ic2;
@@ -184,15 +185,17 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
         for (i = 0; i <= 8; i++) {
           if (e.getSource() == b[i]) {
             if (b[i].getIcon() == null) {
+             
               b[i].setIcon(ic1);
               Random rand = new Random();
               int upperbound = 8;
               int int_random = rand.nextInt(upperbound);
               if (b[int_random].getIcon() == null) {
-                b[int_random].setIcon(ic2);
                 this.check(5);
+                b[int_random].setIcon(ic2);
+                won_int_random=int_random;
               } else {
-                this.complogic(i);
+                won_int_random=this.complogic(i);
               }
             }
           }
@@ -211,6 +214,8 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
           b[(a[i][2] - 1)].setIcon(ic11);
           b[(a[i][3] - 1)].setIcon(ic11);
           if (c1.getState() == true) {
+            if(won_int_random!=-1)
+              b[won_int_random].setIcon(null);
             JOptionPane.showMessageDialog(TTT1.this, "!!!YOU won!!! click reset");
           } else {
             JOptionPane.showMessageDialog(TTT1.this, "Red Won !!");
@@ -229,7 +234,6 @@ class TTT1 extends JFrame implements ItemListener, ActionListener {
         }
       }
     }
-
   }
 
   /************************************************************/
